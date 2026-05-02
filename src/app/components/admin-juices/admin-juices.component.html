@@ -1,0 +1,31 @@
+<div class="container">
+  <h2>Manage Juices</h2>
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <table *ngIf="!loading && juices.length > 0">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Available</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let juice of juices">
+        <td>{{ juice.name }}</td>
+        <td>&#8377; {{ juice.price | number:'1.2-2' }}</td>
+        <td>
+          <span [class.available]="juice.isAvailable" [class.unavailable]="!juice.isAvailable">
+            {{ juice.isAvailable ? 'Yes' : 'No' }}
+          </span>
+        </td>
+        <td>
+          <button (click)="toggle(juice)" [class.btn-off]="juice.isAvailable" [class.btn-on]="!juice.isAvailable">
+            {{ juice.isAvailable ? 'Disable' : 'Enable' }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="!loading && juices.length === 0" class="empty">No juices found.</div>
+</div>

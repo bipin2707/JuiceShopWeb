@@ -1,0 +1,61 @@
+<div class="container">
+  <h2>Dashboard</h2>
+  <div *ngIf="loading" class="loading">Loading dashboard...</div>
+
+  <div *ngIf="!loading && data" class="dashboard">
+    <!-- Summary Cards -->
+    <div class="cards">
+      <div class="card total">
+        <div class="card-number">{{ data.totalOrders }}</div>
+        <div class="card-label">Total Orders</div>
+      </div>
+      <div class="card accepted">
+        <div class="card-number">{{ data.acceptedOrders }}</div>
+        <div class="card-label">Accepted ({{ acceptPercent() }}%)</div>
+      </div>
+      <div class="card rejected">
+        <div class="card-number">{{ data.rejectedOrders }}</div>
+        <div class="card-label">Rejected ({{ rejectPercent() }}%)</div>
+      </div>
+      <div class="card pending">
+        <div class="card-number">{{ data.pendingOrders }}</div>
+        <div class="card-label">Pending</div>
+      </div>
+    </div>
+
+    <!-- Progress Bars -->
+    <div class="progress-section">
+      <h3>Acceptance Rate</h3>
+      <div class="progress-bar">
+        <div class="progress-fill accepted-bg" [style.width.%]="acceptPercent()">{{ acceptPercent() }}%</div>
+      </div>
+      <h3>Rejection Rate</h3>
+      <div class="progress-bar">
+        <div class="progress-fill rejected-bg" [style.width.%]="rejectPercent()">{{ rejectPercent() }}%</div>
+      </div>
+    </div>
+
+    <!-- Orders by Juice -->
+    <h3>Orders by Juice</h3>
+    <table *ngIf="data.ordersByJuice?.length > 0">
+      <thead>
+        <tr>
+          <th>Juice</th>
+          <th>Total</th>
+          <th>Accepted</th>
+          <th>Rejected</th>
+          <th>Pending</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of data.ordersByJuice">
+          <td>{{ item.juiceName }}</td>
+          <td>{{ item.total }}</td>
+          <td class="text-green">{{ item.accepted }}</td>
+          <td class="text-red">{{ item.rejected }}</td>
+          <td class="text-orange">{{ item.pending }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

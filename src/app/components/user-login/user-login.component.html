@@ -1,0 +1,37 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo">&#127865;</div>
+    <h2>Customer Login</h2>
+
+    <!-- Step 1: Name + Phone -->
+    <div *ngIf="step === 1">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input [(ngModel)]="name" placeholder="Enter your name" />
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input [(ngModel)]="phone" placeholder="Enter phone number" type="tel" />
+      </div>
+      <button (click)="sendOtp()" [disabled]="loading">
+        {{ loading ? 'Sending...' : 'Get OTP' }}
+      </button>
+    </div>
+
+    <!-- Step 2: OTP -->
+    <div *ngIf="step === 2">
+      <p class="info">{{ message }}</p>
+      <div class="form-group">
+        <label>Enter OTP</label>
+        <input [(ngModel)]="otp" placeholder="6-digit OTP" maxlength="6" />
+      </div>
+      <button (click)="verifyOtp()" [disabled]="loading">
+        {{ loading ? 'Verifying...' : 'Verify & Login' }}
+      </button>
+      <p class="resend" (click)="step = 1">Back</p>
+    </div>
+
+    <div *ngIf="error" class="error">{{ error }}</div>
+    <a routerLink="/" class="back-link">&#8592; Back to home</a>
+  </div>
+</div>

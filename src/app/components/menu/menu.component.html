@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="header">
+    <h2>Juice Menu</h2>
+    <div class="user-info">
+      <span>Hi, {{ user?.name }}!</span>
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div *ngIf="message" class="alert">{{ message }}</div>
+  <div *ngIf="loading" class="loading">Loading juices...</div>
+
+  <div class="juice-grid" *ngIf="!loading">
+    <div class="juice-card" *ngFor="let juice of juices">
+      <div class="juice-icon">&#127865;</div>
+      <h3>{{ juice.name }}</h3>
+      <p class="price">&#8377; {{ juice.price | number:'1.2-2' }}</p>
+      <button (click)="order(juice)">Order Now</button>
+    </div>
+    <div *ngIf="juices.length === 0" class="empty">No juices available right now.</div>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+.container { max-width: 900px; margin: 0 auto; padding: 20px; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+h2 { color: #2e7d32; }
+.user-info { display: flex; align-items: center; gap: 12px; }
+.user-info span { font-weight: 600; color: #333; }
+.btn-logout { background: #e0e0e0; color: #333; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.btn-logout:hover { background: #bdbdbd; }
+.alert { text-align: center; padding: 10px; background: #e8f5e9; color: #2e7d32; border-radius: 6px; margin-bottom: 16px; }
+.loading { text-align: center; color: #888; }
+.juice-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+.juice-card { background: #fff; border: 2px solid #e0e0e0; border-radius: 12px; padding: 20px; text-align: center; transition: box-shadow 0.2s; }
+.juice-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+.juice-icon { font-size: 48px; margin-bottom: 8px; }
+.juice-card h3 { margin: 8px 0; color: #333; }
+.price { font-size: 18px; font-weight: bold; color: #e65100; }
+button { background: #2e7d32; color: #fff; border: none; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+button:hover { background: #1b5e20; }
+.empty { grid-column: 1 / -1; text-align: center; color: #888; padding: 40px; }
