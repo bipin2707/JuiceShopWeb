@@ -1,0 +1,9 @@
+{
+  "buildCommand": "",
+  "installCommand": "",
+  "outputDirectory": "dist/JuiceShopWeb",
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
