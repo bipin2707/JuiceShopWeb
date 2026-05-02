@@ -1,0 +1,31 @@
+<div class="container">
+  <h2>Manage Orders</h2>
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <table *ngIf="!loading && orders.length > 0">
+    <thead>
+      <tr>
+        <th>Customer</th>
+        <th>Status</th>
+        <th>Ordered At</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders">
+        <td>{{ order.customerName }}</td>
+        <td>
+          <span [ngClass]="{'status-pending': order.status === 'PENDING', 'status-accepted': order.status === 'ACCEPTED', 'status-rejected': order.status === 'REJECTED'}">
+            {{ order.status }}
+          </span>
+        </td>
+        <td>{{ order.createdAt | date:'short' }}</td>
+        <td>
+          <button *ngIf="order.status === 'PENDING'" class="btn-accept" (click)="accept(order)">Accept</button>
+          <button *ngIf="order.status === 'PENDING'" class="btn-reject" (click)="reject(order)">Reject</button>
+          <span *ngIf="order.status !== 'PENDING'" class="done">-</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="!loading && orders.length === 0" class="empty">No orders yet.</div>
+</div>

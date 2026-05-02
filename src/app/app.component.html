@@ -1,0 +1,11 @@
+<!-- No navbar on login pages -->
+<nav class="navbar" *ngIf="auth.isAdminLoggedIn()">
+  <div class="brand">&#128272; Juice Shop Admin</div>
+  <div class="nav-links">
+    <a routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/admin/juices" routerLinkActive="active">Juices</a>
+    <a routerLink="/admin/orders" routerLinkActive="active">Orders</a>
+    <a class="logout-link" (click)="logout()">Logout</a>
+  </div>
+</nav>
+<router-outlet></router-outlet>
