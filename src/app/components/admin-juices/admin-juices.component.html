@@ -1,14 +1,26 @@
 <div class="container">
-  <h2>Manage Juices</h2>
+  <div class="header">
+    <h2>Manage Juices</h2>
+    <button class="add-btn" (click)="showForm = !showForm">{{ showForm ? 'Cancel' : '+ Add Juice' }}</button>
+  </div>
+
+  <div *ngIf="showForm" class="add-form">
+    <div class="form-row">
+      <input [(ngModel)]="newName" placeholder="Juice name" />
+      <input [(ngModel)]="newPrice" type="number" placeholder="Price" min="1" />
+      <label class="toggle-label">
+        <input type="checkbox" [(ngModel)]="newAvailable" /> Available
+      </label>
+      <button (click)="addJuice()" class="save-btn">Save</button>
+    </div>
+  </div>
+
+  <div *ngIf="message" class="alert">{{ message }}</div>
   <div *ngIf="loading" class="loading">Loading...</div>
+
   <table *ngIf="!loading && juices.length > 0">
     <thead>
-      <tr>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Available</th>
-        <th>Action</th>
-      </tr>
+      <tr><th>Name</th><th>Price</th><th>Available</th><th>Action</th></tr>
     </thead>
     <tbody>
       <tr *ngFor="let juice of juices">
@@ -27,5 +39,4 @@
       </tr>
     </tbody>
   </table>
-  <div *ngIf="!loading && juices.length === 0" class="empty">No juices found.</div>
 </div>

@@ -1,0 +1,49 @@
+<div class="container">
+  <div class="header">
+    <h2>&#128722; Your Cart</h2>
+    <a routerLink="/menu" class="back-btn">&#8592; Continue Shopping</a>
+  </div>
+
+  <div *ngIf="items.length === 0" class="empty">
+    <p>Your cart is empty.</p>
+    <a routerLink="/menu" class="shop-btn">Browse Juices</a>
+  </div>
+
+  <table *ngIf="items.length > 0">
+    <thead>
+      <tr>
+        <th>Juice</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items">
+        <td>{{ item.juice.name }}</td>
+        <td>&#8377; {{ item.juice.price | number:'1.2-2' }}</td>
+        <td>
+          <div class="qty-controls">
+            <button class="qty-btn" (click)="decrement(item.juice.id)">&#8722;</button>
+            <span class="qty-value">{{ item.quantity }}</span>
+            <button class="qty-btn" (click)="increment(item.juice.id)">&#43;</button>
+          </div>
+        </td>
+        <td class="subtotal">&#8377; {{ (item.juice.price * item.quantity) | number:'1.2-2' }}</td>
+        <td><button class="remove-btn" (click)="remove(item.juice.id)">&#10005;</button></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" class="total-label">Total</td>
+        <td class="total-value">&#8377; {{ cart.getTotal() | number:'1.2-2' }}</td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div *ngIf="items.length > 0" class="checkout-section">
+    <button class="checkout-btn" (click)="checkout()">Proceed to Checkout</button>
+  </div>
+</div>

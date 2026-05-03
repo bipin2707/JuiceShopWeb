@@ -12,6 +12,6 @@ export class AppComponent {
 
   logout() {
     this.auth.logout();
-    this.router.navigate(['/']);
+    this.router.navigate(['/admin-login']);
   }
 }

@@ -9,24 +9,8 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  // User auth
-  sendOtp(name: string, phone: string): Observable<any> {
-    return this.http.post(this.url + '/user/send-otp', { name, phone });
-  }
-
-  verifyOtp(phone: string, otp: string): Observable<any> {
-    return this.http.post(this.url + '/user/verify-otp', { phone, otp });
-  }
-
-  // Admin auth
   adminLogin(email: string, password: string): Observable<any> {
-    return this.http.post(this.url + '/admin/login', { email, password });
-  }
-
-  // Session helpers
-  setUser(user: any) {
-    localStorage.setItem('juice_user', JSON.stringify(user));
-    localStorage.setItem('juice_role', 'user');
+    return this.http.post(this.url + '/admin/login', { email: email, password: password });
   }
 
   setAdmin(admin: any) {
@@ -34,30 +18,16 @@ export class AuthService {
     localStorage.setItem('juice_role', 'admin');
   }
 
-  getUser(): any {
-    const u = localStorage.getItem('juice_user');
-    return u ? JSON.parse(u) : null;
-  }
-
   getAdmin(): any {
-    const a = localStorage.getItem('juice_admin');
+    var a = localStorage.getItem('juice_admin');
     return a ? JSON.parse(a) : null;
   }
 
-  getRole(): string | null {
-    return localStorage.getItem('juice_role');
-  }
-
-  isUserLoggedIn(): boolean {
-    return this.getRole() === 'user' && this.getUser() !== null;
-  }
-
   isAdminLoggedIn(): boolean {
-    return this.getRole() === 'admin' && this.getAdmin() !== null;
+    return localStorage.getItem('juice_role') === 'admin' && this.getAdmin() !== null;
   }
 
   logout() {
-    localStorage.removeItem('juice_user');
     localStorage.removeItem('juice_admin');
     localStorage.removeItem('juice_role');
   }

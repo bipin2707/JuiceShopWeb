@@ -1,15 +1,26 @@
 .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-h2 { text-align: center; color: #1565c0; margin-bottom: 24px; }
+h2 { text-align: center; color: #1565c0; margin-bottom: 16px; }
 h3 { color: #333; margin: 20px 0 10px; }
+.date-filter { background: #fff; padding: 16px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.date-inputs { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.date-inputs label { font-weight: 600; color: #555; font-size: 13px; }
+.date-inputs input[type=date] { padding: 6px 10px; border: 2px solid #ccc; border-radius: 6px; font-size: 14px; }
+.apply-btn { background: #1565c0; color: #fff; border: none; padding: 7px 18px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; }
+.apply-btn:hover { background: #0d47a1; }
+.presets { display: flex; gap: 8px; flex-wrap: wrap; }
+.preset-btn { background: #e0e0e0; color: #333; border: none; padding: 6px 14px; border-radius: 16px; cursor: pointer; font-size: 12px; }
+.preset-btn:hover { background: #bbdefb; }
+.date-range-label { text-align: center; color: #888; font-size: 13px; margin-bottom: 16px; }
 .loading { text-align: center; color: #888; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-.card { padding: 24px; border-radius: 12px; text-align: center; color: #fff; }
-.card-number { font-size: 36px; font-weight: bold; }
-.card-label { font-size: 14px; margin-top: 4px; opacity: 0.9; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.card { padding: 20px; border-radius: 12px; text-align: center; color: #fff; }
+.card-number { font-size: 32px; font-weight: bold; }
+.card-label { font-size: 13px; margin-top: 4px; opacity: 0.9; }
 .total { background: #1565c0; }
 .accepted { background: #2e7d32; }
 .rejected { background: #c62828; }
 .pending { background: #f57f17; }
+.sales { background: #6a1b9a; }
 .progress-section { margin-bottom: 24px; }
 .progress-bar { background: #e0e0e0; border-radius: 8px; height: 28px; overflow: hidden; margin-bottom: 12px; }
 .progress-fill { height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 13px; transition: width 0.5s; min-width: 30px; }
@@ -19,5 +30,5 @@ table { width: 100%; border-collapse: collapse; }
 th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #e0e0e0; }
 th { background: #e3f2fd; color: #1565c0; }
 .text-green { color: #2e7d32; font-weight: bold; }
-.text-red { color: #c62828; font-weight: bold; }
 .text-orange { color: #f57f17; font-weight: bold; }
+.empty { text-align: center; color: #888; padding: 20px; }
