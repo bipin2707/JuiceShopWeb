@@ -17,6 +17,7 @@ h2 { color: #2e7d32; margin: 0; }
 .qty-btn:hover { background: #e8f5e9; }
 .qty-value { width: 44px; text-align: center; font-size: 18px; font-weight: 700; color: #333; }
 .empty { grid-column: 1 / -1; text-align: center; color: #888; padding: 40px; }
-.footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; }
-.admin-link { color: #999; text-decoration: none; font-size: 13px; }
-.admin-link:hover { color: #1565c0; }
+
+
+
+
