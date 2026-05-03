@@ -5,20 +5,31 @@
     <thead>
       <tr>
         <th>Customer</th>
+        <th>Phone</th>
+        <th>Juice</th>
+        <th>Qty</th>
+        <th>Amount</th>
         <th>Status</th>
-        <th>Ordered At</th>
+        <th>Time</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let order of orders">
-        <td>{{ order.customerName }}</td>
+        <td>
+          {{ order.customerName }}
+          <div *ngIf="order.location" class="location">&#128205; {{ order.location }}</div>
+        </td>
+        <td>{{ order.phone }}</td>
+        <td>{{ order.juiceName }}</td>
+        <td>{{ order.quantity }}</td>
+        <td>&#8377; {{ order.amount | number:'1.2-2' }}</td>
         <td>
           <span [ngClass]="{'status-pending': order.status === 'PENDING', 'status-accepted': order.status === 'ACCEPTED', 'status-rejected': order.status === 'REJECTED'}">
             {{ order.status }}
           </span>
         </td>
-        <td>{{ order.createdAt | date:'short' }}</td>
+        <td>{{ order.createdAt }}</td>
         <td>
           <button *ngIf="order.status === 'PENDING'" class="btn-accept" (click)="accept(order)">Accept</button>
           <button *ngIf="order.status === 'PENDING'" class="btn-reject" (click)="reject(order)">Reject</button>
@@ -29,3 +40,6 @@
   </table>
   <div *ngIf="!loading && orders.length === 0" class="empty">No orders yet.</div>
 </div>
+
+
+

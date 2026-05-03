@@ -1,0 +1,90 @@
+<div class="container">
+  <!-- Checkout Form -->
+  <div *ngIf="!orderPlaced">
+    <h2>&#128179; Checkout</h2>
+
+    <div class="form-group">
+      <label>Name <span class="required">*</span></label>
+      <input [(ngModel)]="customerName" placeholder="Enter your name" />
+    </div>
+    <div class="form-group">
+      <label>Phone Number <span class="required">*</span></label>
+      <input [(ngModel)]="phone" placeholder="10-digit phone number" maxlength="10" (blur)="validatePhone()" />
+      <p *ngIf="phoneError" class="field-error">{{ phoneError }}</p>
+    </div>
+    <div class="form-group">
+      <label>Location <span class="optional">(optional)</span></label>
+      <input [(ngModel)]="location" placeholder="Delivery address or area" />
+    </div>
+
+    <h3>Order Summary</h3>
+    <table *ngIf="items.length > 0">
+      <thead>
+        <tr><th>Juice</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items">
+          <td>{{ item.juice.name }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>&#8377; {{ item.juice.price | number:'1.2-2' }}</td>
+          <td>&#8377; {{ (item.juice.price * item.quantity) | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="total-label">Total</td>
+          <td class="total-value">&#8377; {{ cart.getTotal() | number:'1.2-2' }}</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div *ngIf="error" class="error">{{ error }}</div>
+    <div class="actions">
+      <a routerLink="/cart" class="back-link">&#8592; Back to Cart</a>
+      <button (click)="placeOrder()" [disabled]="loading" class="place-btn">
+        {{ loading ? 'Placing Order...' : 'Place Order' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Invoice -->
+  <div *ngIf="orderPlaced" class="invoice" id="invoice">
+    <div class="invoice-header">
+      <h1>Sonepur Royal Juice</h1>
+      <p class="tagline">Fresh & Natural Juices</p>
+    </div>
+    <hr />
+    <div class="invoice-meta">
+      <p><strong>Customer:</strong> {{ customerName }}</p>
+      <p><strong>Phone:</strong> {{ phone }}</p>
+      <p *ngIf="location"><strong>Location:</strong> {{ location }}</p>
+      <p><strong>Date:</strong> {{ orderDate }}</p>
+      <p><strong>Status:</strong> <span class="status-pending">Pending Approval</span></p>
+    </div>
+    <table class="invoice-table">
+      <thead>
+        <tr><th>#</th><th>Item</th><th>Qty</th><th>Rate</th><th>Amount</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ item.juice.name }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>&#8377; {{ item.juice.price | number:'1.2-2' }}</td>
+          <td>&#8377; {{ (item.juice.price * item.quantity) | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" class="total-label">Grand Total</td>
+          <td class="total-value">&#8377; {{ cart.getTotal() | number:'1.2-2' }}</td>
+        </tr>
+      </tfoot>
+    </table>
+    <p class="thank-you">Thank you for your order! Your order is pending admin approval.</p>
+    <div class="invoice-actions no-print">
+      <button (click)="printInvoice()" class="print-btn">&#128424; Print Invoice</button>
+      <button (click)="newOrder()" class="new-btn">New Order</button>
+    </div>
+  </div>
+</div>

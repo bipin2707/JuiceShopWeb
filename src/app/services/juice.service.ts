@@ -18,6 +18,10 @@ export class JuiceService {
     return this.http.get<Juice[]>(this.url + '/all');
   }
 
+  addJuice(name: string, price: number, isAvailable: boolean): Observable<any> {
+    return this.http.post(this.url + '/add', { name: name, price: price, isAvailable: isAvailable });
+  }
+
   toggleAvailability(id: string): Observable<any> {
     return this.http.put(this.url + '/toggle/' + id, {});
   }

@@ -9,12 +9,21 @@ export class OrderService {
 
   constructor(private http: HttpClient) {}
 
-  placeOrder(juiceId: string, userId: string): Observable<any> {
-    return this.http.post(this.url + '/place', { juiceId, userId });
+  placeOrder(customerName: string, phone: string, location: string, items: any[]): Observable<any> {
+    return this.http.post(this.url + '/place', {
+      customerName: customerName,
+      phone: phone,
+      location: location,
+      items: items
+    });
   }
 
   getOrders(): Observable<any[]> {
     return this.http.get<any[]>(this.url);
+  }
+
+  getDashboard(from: string, to: string): Observable<any> {
+    return this.http.get(this.url + '/dashboard?from=' + from + '&to=' + to);
   }
 
   acceptOrder(id: string): Observable<any> {

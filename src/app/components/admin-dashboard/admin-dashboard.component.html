@@ -1,9 +1,28 @@
 <div class="container">
   <h2>Dashboard</h2>
+
+  <!-- Date Range Filter -->
+  <div class="date-filter">
+    <div class="date-inputs">
+      <label>From</label>
+      <input type="date" [(ngModel)]="fromDate" />
+      <label>To</label>
+      <input type="date" [(ngModel)]="toDate" />
+      <button class="apply-btn" (click)="applyFilter()">Apply</button>
+    </div>
+    <div class="presets">
+      <button (click)="setPreset(1)" class="preset-btn">Today</button>
+      <button (click)="setPreset(7)" class="preset-btn active">Last 7 Days</button>
+      <button (click)="setPreset(30)" class="preset-btn">Last 30 Days</button>
+      <button (click)="setPreset(90)" class="preset-btn">Last 90 Days</button>
+    </div>
+  </div>
+
   <div *ngIf="loading" class="loading">Loading dashboard...</div>
 
   <div *ngIf="!loading && data" class="dashboard">
-    <!-- Summary Cards -->
+    <p class="date-range-label">Showing data from {{ data.fromDate }} to {{ data.toDate }}</p>
+
     <div class="cards">
       <div class="card total">
         <div class="card-number">{{ data.totalOrders }}</div>
@@ -21,9 +40,12 @@
         <div class="card-number">{{ data.pendingOrders }}</div>
         <div class="card-label">Pending</div>
       </div>
+      <div class="card sales">
+        <div class="card-number">&#8377; {{ data.totalSalesRupees | number:'1.0-0' }}</div>
+        <div class="card-label">Total Sales</div>
+      </div>
     </div>
 
-    <!-- Progress Bars -->
     <div class="progress-section">
       <h3>Acceptance Rate</h3>
       <div class="progress-bar">
@@ -35,15 +57,14 @@
       </div>
     </div>
 
-    <!-- Orders by Juice -->
-    <h3>Orders by Juice</h3>
+    <h3>Sales by Juice</h3>
     <table *ngIf="data.ordersByJuice?.length > 0">
       <thead>
         <tr>
           <th>Juice</th>
-          <th>Total</th>
-          <th>Accepted</th>
-          <th>Rejected</th>
+          <th>Orders</th>
+          <th>Sold Qty</th>
+          <th>Sales (&#8377;)</th>
           <th>Pending</th>
         </tr>
       </thead>
@@ -51,11 +72,12 @@
         <tr *ngFor="let item of data.ordersByJuice">
           <td>{{ item.juiceName }}</td>
           <td>{{ item.total }}</td>
-          <td class="text-green">{{ item.accepted }}</td>
-          <td class="text-red">{{ item.rejected }}</td>
+          <td class="text-green">{{ item.salesQty }}</td>
+          <td class="text-green">&#8377; {{ item.salesRupees | number:'1.0-0' }}</td>
           <td class="text-orange">{{ item.pending }}</td>
         </tr>
       </tbody>
     </table>
+    <div *ngIf="!data.ordersByJuice || data.ordersByJuice.length === 0" class="empty">No orders in this date range.</div>
   </div>
 </div>

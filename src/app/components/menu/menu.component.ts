@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { JuiceService } from '../../services/juice.service';
-import { OrderService } from '../../services/order.service';
-import { AuthService } from '../../services/auth.service';
+import { CartService } from '../../services/cart.service';
 import { Juice } from '../../models/juice.model';
 
 @Component({
@@ -12,43 +10,45 @@ import { Juice } from '../../models/juice.model';
 })
 export class MenuComponent implements OnInit {
   juices: Juice[] = [];
-  message = '';
   loading = true;
-  user: any;
 
   constructor(
     private juiceService: JuiceService,
-    private orderService: OrderService,
-    private auth: AuthService,
-    private router: Router
+    public cart: CartService
   ) {}
 
-  ngOnInit() {
-    this.user = this.auth.getUser();
-    if (!this.user) {
-      this.router.navigate(['/']);
-      return;
-    }
-    this.loadJuices();
-  }
+  ngOnInit() { this.loadJuices(); }
 
   loadJuices() {
     this.loading = true;
     this.juiceService.getAvailable().subscribe(
-      data => { this.juices = data; this.loading = false; },
-      () => { this.message = 'Failed to load juices'; this.loading = false; }
+      function(data) { this.juices = data; this.loading = false; }.bind(this),
+      function() { this.loading = false; }.bind(this)
     );
   }
 
-  order(juice: Juice) {
-    this.orderService.placeOrder(juice.id, this.user.id).subscribe(
-      () => { this.message = 'Order placed for ' + juice.name + '!'; },
-      () => { this.message = 'Failed to place order.'; }
-    );
+  getQty(juiceId: string): number {
+    var items = this.cart.getItems();
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].juice.id === juiceId) return items[i].quantity;
+    }
+    return 0;
   }
 
-  logout() {
-    this.auth.logout();
-    this.router.navigate(['/']);
+  addToCart(juice: Juice) {
+    this.cart.addToCart(juice);
+  }
+
+  increment(juice: Juice) {
+    this.cart.addToCart(juice);
+  }
+
+  decrement(juiceId: string) {
+    var qty = this.getQty(juiceId);
+    if (qty <= 1) {
+      this.cart.removeFromCart(juiceId);
+    } else {
+      this.cart.updateQuantity(juiceId, qty - 1);
+    }
   }
 }
