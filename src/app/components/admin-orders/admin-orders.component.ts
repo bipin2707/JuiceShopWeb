@@ -14,6 +14,7 @@ export class AdminOrdersComponent implements OnInit {
 
   ngOnInit() { this.loadOrders(); }
 
+
   loadOrders() {
     this.loading = true;
     this.orderService.getOrders().subscribe(
