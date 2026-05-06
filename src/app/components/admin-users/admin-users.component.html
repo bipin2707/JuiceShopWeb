@@ -1,0 +1,77 @@
+<div class="container">
+  <h2>&#128101; Manage Users</h2>
+
+  <div *ngIf="loading" class="loading">Loading...</div>
+
+  <div *ngIf="!loading" class="panels">
+    <!-- Add Admin Section -->
+    <div class="panel">
+      <h3>&#128272; Add New Admin</h3>
+      <div class="form-row">
+        <input [(ngModel)]="adminName" placeholder="Name" class="input-field" />
+        <input [(ngModel)]="adminEmail" placeholder="Email" type="email" class="input-field" />
+        <input [(ngModel)]="adminPassword" placeholder="Password" type="password" class="input-field" />
+        <button (click)="addAdmin()" [disabled]="adminLoading" class="add-btn admin-btn">
+          {{ adminLoading ? 'Adding...' : '+ Add Admin' }}
+        </button>
+      </div>
+      <p *ngIf="adminError" class="error">{{ adminError }}</p>
+      <p *ngIf="adminSuccess" class="success">{{ adminSuccess }}</p>
+
+      <!-- Admin List -->
+      <table *ngIf="admins.length > 0" class="user-table">
+        <thead>
+          <tr><th>Name</th><th>Email</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let admin of admins">
+            <td>{{ admin.name }}</td>
+            <td>{{ admin.email }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="admins.length === 0" class="empty-msg">No admins found.</p>
+    </div>
+
+    <!-- Add Delivery Boy Section -->
+    <div class="panel">
+      <h3>&#128666; Add Delivery Partner</h3>
+      <div class="form-row">
+        <input [(ngModel)]="dbName" placeholder="Name" class="input-field" />
+        <input [(ngModel)]="dbEmail" placeholder="Email" type="email" class="input-field" />
+        <input [(ngModel)]="dbPassword" placeholder="Password" type="password" class="input-field" />
+        <input [(ngModel)]="dbPhone" placeholder="Phone (optional)" class="input-field" />
+        <button (click)="addDeliveryBoy()" [disabled]="dbLoading" class="add-btn delivery-btn">
+          {{ dbLoading ? 'Adding...' : '+ Add Delivery Boy' }}
+        </button>
+      </div>
+      <p *ngIf="dbError" class="error">{{ dbError }}</p>
+      <p *ngIf="dbSuccess" class="success">{{ dbSuccess }}</p>
+
+      <!-- Delivery Boys List -->
+      <table *ngIf="deliveryBoys.length > 0" class="user-table">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let boy of deliveryBoys">
+            <td>{{ boy.name }}</td>
+            <td>{{ boy.email }}</td>
+            <td>{{ boy.phone || '-' }}</td>
+            <td>
+              <span [ngClass]="{'active-badge': boy.isActive, 'inactive-badge': !boy.isActive}">
+                {{ boy.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td>
+              <button (click)="toggleDeliveryBoy(boy)" class="toggle-btn">
+                {{ boy.isActive ? 'Deactivate' : 'Activate' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="deliveryBoys.length === 0" class="empty-msg">No delivery partners found.</p>
+    </div>
+  </div>
+</div>

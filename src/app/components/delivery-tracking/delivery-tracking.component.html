@@ -1,0 +1,79 @@
+<div class="container">
+  <h2>&#128666; Start Delivery</h2>
+
+  <!-- Setup Form -->
+  <div *ngIf="!isTracking" class="setup-form">
+    <div *ngIf="loading" class="loading">Loading accepted orders...</div>
+
+    <div *ngIf="!loading && orders.length === 0" class="empty">
+      <p>No accepted orders available for delivery.</p>
+      <button (click)="loadAcceptedOrders()" class="refresh-btn">&#128260; Refresh</button>
+    </div>
+
+    <div *ngIf="!loading && orders.length > 0">
+      <p class="welcome-msg">Welcome, <strong>{{ deliveryPersonName }}</strong></p>
+
+      <div class="form-group">
+        <label>Select Order to Deliver</label>
+        <select [(ngModel)]="selectedOrderId" class="input-field">
+          <option value="">-- Select an order --</option>
+          <option *ngFor="let order of orders" [value]="order.id">
+            {{ order.customerName }} - {{ order.juiceName }} x{{ order.quantity }}
+            <span *ngIf="order.location"> ({{ order.location }})</span>
+          </option>
+        </select>
+      </div>
+
+      <!-- Order details -->
+      <div *ngIf="selectedOrderId" class="order-details">
+        <h4>Order Details</h4>
+        <div *ngFor="let order of orders">
+          <div *ngIf="order.id === selectedOrderId" class="detail-card">
+            <p><strong>Customer:</strong> {{ order.customerName }}</p>
+            <p><strong>Phone:</strong> {{ order.phone }}</p>
+            <p><strong>Location:</strong> {{ order.location || 'Not specified' }}</p>
+            <p *ngIf="order.deliveryLatitude"><strong>GPS:</strong> {{ order.deliveryLatitude }}, {{ order.deliveryLongitude }}</p>
+            <p><strong>Item:</strong> {{ order.juiceName }} x {{ order.quantity }}</p>
+            <p><strong>Ordered:</strong> {{ order.createdAt }}</p>
+          </div>
+        </div>
+      </div>
+
+      <button (click)="startTracking()" class="start-btn">
+        &#128205; Start Delivery & Share Location
+      </button>
+      <button (click)="loadAcceptedOrders()" class="refresh-btn">&#128260; Refresh Orders</button>
+    </div>
+
+    <p *ngIf="error" class="error">{{ error }}</p>
+  </div>
+
+  <!-- Active Tracking -->
+  <div *ngIf="isTracking" class="active-tracking">
+    <div class="tracking-status">
+      <div class="pulse-dot"></div>
+      <span class="live-text">LIVE - Sharing Location</span>
+    </div>
+
+    <p class="status-msg">{{ statusMessage }}</p>
+
+    <div class="map-container">
+      <div id="delivery-map"></div>
+    </div>
+
+    <p class="map-legend">
+      &#128309; Blue = Your location &nbsp; | &nbsp; &#128308; Red = Customer location
+    </p>
+
+    <div class="tracking-actions">
+      <button (click)="completeDelivery()" class="complete-btn">
+        &#9989; Mark Delivery Complete
+      </button>
+      <button (click)="stopTracking()" class="stop-btn">
+        &#9724; Stop Tracking
+      </button>
+    </div>
+
+    <p *ngIf="error" class="error">{{ error }}</p>
+  </div>
+</div>

@@ -1,7 +1,28 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
+
+/* Admin Navbar */
 .navbar { display: flex; align-items: center; justify-content: space-between; background: #1565c0; padding: 12px 24px; color: #fff; }
+.navbar .nav-links a { color: #bbdefb; }
+
+/* Delivery Navbar */
+.delivery-navbar { display: flex; align-items: center; justify-content: space-between; background: #e65100; padding: 12px 24px; color: #fff; }
+.delivery-navbar .nav-links a { color: #ffcc80; }
+
+/* Customer Navbar */
+.customer-navbar { display: flex; align-items: center; justify-content: space-between; background: #2e7d32; padding: 12px 24px; color: #fff; }
+.customer-navbar .nav-links a { color: #c8e6c9; }
+
+/* Common */
 .brand { font-size: 20px; font-weight: bold; }
-.nav-links a { color: #bbdefb; text-decoration: none; margin-left: 18px; font-size: 14px; padding: 6px 12px; border-radius: 4px; transition: background 0.2s; cursor: pointer; }
+.nav-links a {
+  text-decoration: none;
+  margin-left: 18px;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
 .nav-links a:hover, .nav-links a.active { background: rgba(255,255,255,0.15); color: #fff; }
 .logout-link { cursor: pointer; }

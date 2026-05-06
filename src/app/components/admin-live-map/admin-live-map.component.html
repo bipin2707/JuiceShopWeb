@@ -1,0 +1,48 @@
+<div class="container">
+  <h2>&#127757; Live Delivery Map</h2>
+
+  <div *ngIf="loading" class="loading">Loading active deliveries...</div>
+
+  <div *ngIf="!loading && deliveries.length === 0" class="empty">
+    <p>&#128230; No active deliveries at the moment.</p>
+    <p class="hint">Deliveries will appear here once a delivery partner starts tracking.</p>
+  </div>
+
+  <div *ngIf="!loading && deliveries.length > 0">
+    <div class="stats-bar">
+      <span class="stat">&#128666; Active Deliveries: <strong>{{ deliveries.length }}</strong></span>
+      <span class="refresh-note">&#128260; Auto-refreshes every 5 seconds</span>
+    </div>
+
+    <div class="map-container">
+      <div id="admin-live-map"></div>
+    </div>
+
+    <!-- Delivery List -->
+    <div class="delivery-list">
+      <h3>Active Delivery Partners</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Delivery Partner</th>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>Destination</th>
+            <th>Last Update</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of deliveries">
+            <td>{{ d.deliveryPersonName || 'Unknown' }}</td>
+            <td>{{ d.customerName }}</td>
+            <td>{{ d.phone }}</td>
+            <td>{{ d.deliveryLocation || 'N/A' }}</td>
+            <td>{{ d.updatedAt }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p *ngIf="error" class="error">{{ error }}</p>
+</div>

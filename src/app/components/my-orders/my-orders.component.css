@@ -1,0 +1,117 @@
+.container { max-width: 700px; margin: 0 auto; padding: 20px; }
+h2 { text-align: center; color: #1565c0; margin-bottom: 20px; }
+
+.info-text { text-align: center; color: #666; margin-bottom: 14px; }
+
+.search-section { text-align: center; margin-bottom: 24px; }
+.search-row { display: flex; justify-content: center; gap: 10px; }
+.phone-input {
+  padding: 10px 16px;
+  font-size: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  width: 220px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.phone-input:focus { border-color: #1565c0; }
+.search-btn {
+  padding: 10px 24px;
+  background: #1565c0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.search-btn:hover { background: #0d47a1; }
+.search-btn:disabled { background: #aaa; cursor: not-allowed; }
+
+.error { color: #c62828; margin-top: 8px; font-size: 13px; }
+
+.loading { text-align: center; color: #888; padding: 30px; }
+
+.empty { text-align: center; padding: 40px; color: #888; }
+.hint { font-size: 13px; color: #aaa; margin-top: 6px; }
+
+.order-count { color: #666; font-size: 14px; margin-bottom: 16px; }
+
+/* Order Card */
+.order-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s;
+}
+.order-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.order-item-info { display: flex; align-items: center; gap: 8px; }
+.juice-name { font-weight: bold; font-size: 16px; color: #333; }
+.qty { background: #e3f2fd; color: #1565c0; padding: 2px 8px; border-radius: 12px; font-size: 13px; font-weight: bold; }
+.order-amount { font-size: 18px; font-weight: bold; color: #2e7d32; }
+
+/* Progress Bar */
+.progress-section { margin-bottom: 14px; }
+.progress-bar {
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #bbb;
+}
+.progress-labels span.active { color: #2e7d32; font-weight: bold; }
+
+/* Footer */
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.status-pending { background: #fff8e1; color: #f57f17; }
+.status-accepted { background: #e8f5e9; color: #2e7d32; }
+.status-rejected { background: #ffebee; color: #c62828; }
+.order-time { font-size: 12px; color: #999; }
+
+/* Meta */
+.order-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+.location { color: #888; }
+.track-link {
+  color: #1565c0;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 13px;
+}
+.track-link:hover { text-decoration: underline; }

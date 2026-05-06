@@ -14,6 +14,9 @@ export class AuthService {
   }
 
   setAdmin(admin: any) {
+    // Clear any other session first
+    localStorage.removeItem('juice_delivery_boy');
+    // Set admin session
     localStorage.setItem('juice_admin', JSON.stringify(admin));
     localStorage.setItem('juice_role', 'admin');
   }

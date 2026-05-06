@@ -1,0 +1,85 @@
+<div class="container">
+  <h2>&#128666; Track Your Delivery</h2>
+
+  <!-- Search by Order ID -->
+  <div class="search-box">
+    <p *ngIf="!searched" class="info-text">Enter your Order ID to track the delivery in real-time on the map.</p>
+    <div class="search-row">
+      <input [(ngModel)]="searchOrderId" placeholder="Enter Order ID" class="search-input"
+        (keyup.enter)="searchTrack()" />
+      <button (click)="searchTrack()" class="track-btn">Track</button>
+    </div>
+    <p *ngIf="error" class="error">{{ error }}</p>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <p>&#128269; Fetching delivery status...</p>
+  </div>
+
+  <!-- Order Status Timeline (shown after search) -->
+  <div *ngIf="!loading && searched && !error" class="timeline-section">
+    <div class="timeline">
+      <div class="timeline-step" [class.active]="getStatusStep() >= 1" [class.rejected]="status === 'REJECTED'">
+        <div class="step-dot"></div>
+        <div class="step-label">Order Placed</div>
+      </div>
+      <div class="timeline-line" [class.active]="getStatusStep() >= 2"></div>
+      <div class="timeline-step" [class.active]="getStatusStep() >= 2" [class.rejected]="status === 'REJECTED'">
+        <div class="step-dot"></div>
+        <div class="step-label">Accepted</div>
+      </div>
+      <div class="timeline-line" [class.active]="getStatusStep() >= 3"></div>
+      <div class="timeline-step" [class.active]="getStatusStep() >= 3">
+        <div class="step-dot"></div>
+        <div class="step-label">Out for Delivery</div>
+      </div>
+    </div>
+
+    <!-- Rejected Status -->
+    <div *ngIf="status === 'REJECTED'" class="status-card rejected-card">
+      <p class="status-icon">&#10060;</p>
+      <p class="status-text">Order Rejected</p>
+      <p class="status-hint">This order was rejected by the admin.</p>
+    </div>
+
+    <!-- Pending Status -->
+    <div *ngIf="status === 'PENDING'" class="status-card pending-card">
+      <p class="status-icon">&#9203;</p>
+      <p class="status-text">Waiting for Approval</p>
+      <p class="status-hint">Your order is being reviewed by the admin. Please wait.</p>
+    </div>
+
+    <!-- Accepted but not yet out for delivery -->
+    <div *ngIf="status === 'ACCEPTED' && !tracking" class="status-card accepted-card">
+      <p class="status-icon">&#9989;</p>
+      <p class="status-text">Order Accepted!</p>
+      <p class="status-hint">Your order has been accepted. A delivery partner will pick it up soon.</p>
+      <p class="status-hint">Live map will appear once the delivery starts.</p>
+    </div>
+  </div>
+
+  <!-- Live Tracking Map -->
+  <div *ngIf="tracking" class="tracking-info">
+    <div class="status-bar">
+      <div class="status-item">
+        <span class="label">Status:</span>
+        <span class="value status-live">&#128994; Out for Delivery</span>
+      </div>
+      <div class="status-item">
+        <span class="label">Delivery Partner:</span>
+        <span class="value">{{ deliveryPersonName }}</span>
+      </div>
+      <div class="status-item">
+        <span class="label">Last Updated:</span>
+        <span class="value">{{ updatedAt }}</span>
+      </div>
+    </div>
+
+    <div class="map-container">
+      <div id="tracking-map"></div>
+    </div>
+
+    <p class="refresh-note">&#128260; Map refreshes automatically every 5 seconds</p>
+  </div>
+</div>

@@ -1,10 +1,35 @@
+<!-- Admin navigation -->
 <nav class="navbar" *ngIf="auth.isAdminLoggedIn()">
   <div class="brand">&#128272; Sonepur Royal Juice - Admin</div>
   <div class="nav-links">
     <a routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
     <a routerLink="/admin/juices" routerLinkActive="active">Juices</a>
     <a routerLink="/admin/orders" routerLinkActive="active">Orders</a>
+    <a routerLink="/admin/live-map" routerLinkActive="active">&#127757; Live Map</a>
+    <a routerLink="/admin/users" routerLinkActive="active">&#128101; Users</a>
     <a class="logout-link" (click)="logout()">Logout</a>
   </div>
 </nav>
+
+<!-- Delivery boy navigation -->
+<nav class="delivery-navbar" *ngIf="!auth.isAdminLoggedIn() && deliveryAuth.isLoggedIn()">
+  <div class="brand">&#128666; Sonepur Royal Juice - Delivery</div>
+  <div class="nav-links">
+    <a routerLink="/delivery/dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/delivery/track" routerLinkActive="active">Start Delivery</a>
+    <a class="logout-link" (click)="deliveryLogout()">Logout</a>
+  </div>
+</nav>
+
+<!-- Customer navigation (shown when not admin and not delivery boy, and not on login pages) -->
+<nav class="customer-navbar" *ngIf="!auth.isAdminLoggedIn() && !deliveryAuth.isLoggedIn() && !isLoginPage()">
+  <div class="brand">&#127865; Sonepur Royal Juice</div>
+  <div class="nav-links">
+    <a routerLink="/menu" routerLinkActive="active">Menu</a>
+    <a routerLink="/cart" routerLinkActive="active">Cart</a>
+    <a routerLink="/my-orders" routerLinkActive="active">&#128230; My Orders</a>
+    <a routerLink="/track-order" routerLinkActive="active">&#128666; Track Order</a>
+  </div>
+</nav>
+
 <router-outlet></router-outlet>

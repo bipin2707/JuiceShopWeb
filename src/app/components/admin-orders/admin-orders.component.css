@@ -12,3 +12,6 @@ th { background: #e3f2fd; color: #1565c0; font-size: 12px; text-transform: upper
 .btn-reject { background: #c62828; color: #fff; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
 .done { color: #888; }
 .empty { text-align: center; color: #888; padding: 40px; }
+
+.btn-track { background: #1565c0; color: #fff; text-decoration: none; padding: 5px 12px; border-radius: 4px; font-size: 12px; }
+.btn-track:hover { background: #0d47a1; }

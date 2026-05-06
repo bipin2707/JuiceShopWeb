@@ -12,6 +12,13 @@ import { AdminLoginComponent } from './components/admin-login/admin-login.compon
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { AdminJuicesComponent } from './components/admin-juices/admin-juices.component';
 import { AdminOrdersComponent } from './components/admin-orders/admin-orders.component';
+import { TrackOrderComponent } from './components/track-order/track-order.component';
+import { DeliveryTrackingComponent } from './components/delivery-tracking/delivery-tracking.component';
+import { AdminLiveMapComponent } from './components/admin-live-map/admin-live-map.component';
+import { MyOrdersComponent } from './components/my-orders/my-orders.component';
+import { DeliveryLoginComponent } from './components/delivery-login/delivery-login.component';
+import { DeliveryDashboardComponent } from './components/delivery-dashboard/delivery-dashboard.component';
+import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +29,14 @@ import { AdminOrdersComponent } from './components/admin-orders/admin-orders.com
     AdminLoginComponent,
     AdminDashboardComponent,
     AdminJuicesComponent,
-    AdminOrdersComponent
+    AdminOrdersComponent,
+    TrackOrderComponent,
+    DeliveryTrackingComponent,
+    AdminLiveMapComponent,
+    MyOrdersComponent,
+    DeliveryLoginComponent,
+    DeliveryDashboardComponent,
+    AdminUsersComponent
   ],
   imports: [
     BrowserModule,

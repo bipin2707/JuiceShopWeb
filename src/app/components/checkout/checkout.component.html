@@ -12,9 +12,29 @@
       <input [(ngModel)]="phone" placeholder="10-digit phone number" maxlength="10" (blur)="validatePhone()" />
       <p *ngIf="phoneError" class="field-error">{{ phoneError }}</p>
     </div>
+
+    <!-- Location Section -->
     <div class="form-group">
-      <label>Location <span class="optional">(optional)</span></label>
-      <input [(ngModel)]="location" placeholder="Delivery address or area" />
+      <label>Delivery Location</label>
+      <div class="location-row">
+        <input [(ngModel)]="location" placeholder="Delivery address or area" class="location-input" />
+        <button type="button" (click)="useCurrentLocation()" [disabled]="locationLoading" class="gps-btn">
+          {{ locationLoading ? '&#8987; Getting...' : '&#128205; Use GPS' }}
+        </button>
+      </div>
+      <p *ngIf="locationError" class="field-error">{{ locationError }}</p>
+    </div>
+
+    <!-- Mini Map (shown after GPS acquired) -->
+    <div *ngIf="locationAcquired" class="location-map-section">
+      <div class="map-header">
+        <span class="map-label">&#9989; Location pinned on map</span>
+        <button type="button" (click)="removeLocation()" class="remove-loc-btn">&#10005; Remove</button>
+      </div>
+      <div class="mini-map-container">
+        <div id="checkout-map"></div>
+      </div>
+      <p class="map-hint">Drag the marker to adjust your delivery location</p>
     </div>
 
     <h3>Order Summary</h3>
@@ -82,6 +102,13 @@
       </tfoot>
     </table>
     <p class="thank-you">Thank you for your order! Your order is pending admin approval.</p>
+    <div *ngIf="orderIds.length > 0" class="track-info">
+      <p class="track-label">&#128666; Track your delivery:</p>
+      <div *ngFor="let oid of orderIds" class="order-id-row">
+        <span class="order-id">{{ oid }}</span>
+        <a [routerLink]="['/track-order', oid]" class="track-link">Track &rarr;</a>
+      </div>
+    </div>
     <div class="invoice-actions no-print">
       <button (click)="printInvoice()" class="print-btn">&#128424; Print Invoice</button>
       <button (click)="newOrder()" class="new-btn">New Order</button>
