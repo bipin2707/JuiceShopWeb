@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { CartService, CartItem } from '../../services/cart.service';
 import { OrderService } from '../../services/order.service';
 
+declare var L: any;
+
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
@@ -17,6 +19,17 @@ export class CheckoutComponent {
   loading = false;
   orderPlaced = false;
   orderDate = '';
+  orderIds: string[] = [];
+
+  // GPS location
+  deliveryLatitude: number = 0;
+  deliveryLongitude: number = 0;
+  locationLoading = false;
+  locationError = '';
+  locationAcquired = false;
+
+  private map: any = null;
+  private marker: any = null;
 
   constructor(
     public cart: CartService,
@@ -36,6 +49,90 @@ export class CheckoutComponent {
     }
     this.phoneError = '';
     return true;
+  }
+
+  useCurrentLocation() {
+    this.locationError = '';
+    this.locationLoading = true;
+
+    if (!navigator.geolocation) {
+      this.locationError = 'Geolocation is not supported by your browser.';
+      this.locationLoading = false;
+      return;
+    }
+
+    var self = this;
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        self.deliveryLatitude = position.coords.latitude;
+        self.deliveryLongitude = position.coords.longitude;
+        self.locationAcquired = true;
+        self.locationLoading = false;
+        self.location = 'GPS: ' + self.deliveryLatitude.toFixed(6) + ', ' + self.deliveryLongitude.toFixed(6);
+
+        // Show mini map
+        setTimeout(function() { self.showLocationMap(); }, 100);
+      },
+      function(err) {
+        self.locationLoading = false;
+        if (err.code === 1) {
+          self.locationError = 'Location permission denied. Please allow location access.';
+        } else if (err.code === 2) {
+          self.locationError = 'Location unavailable. Please try again.';
+        } else {
+          self.locationError = 'Location request timed out. Please try again.';
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }
+
+  showLocationMap() {
+    if (this.map) {
+      this.map.remove();
+      this.map = null;
+    }
+
+    this.map = L.map('checkout-map').setView([this.deliveryLatitude, this.deliveryLongitude], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 19
+    }).addTo(this.map);
+
+    var redIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    this.marker = L.marker([this.deliveryLatitude, this.deliveryLongitude], {
+      icon: redIcon,
+      draggable: true
+    }).addTo(this.map);
+    this.marker.bindPopup('<b>Delivery Location</b><br>Drag to adjust').openPopup();
+
+    // Allow dragging marker to adjust location
+    var self = this;
+    this.marker.on('dragend', function() {
+      var pos = self.marker.getLatLng();
+      self.deliveryLatitude = pos.lat;
+      self.deliveryLongitude = pos.lng;
+      self.location = 'GPS: ' + pos.lat.toFixed(6) + ', ' + pos.lng.toFixed(6);
+    });
+  }
+
+  removeLocation() {
+    this.locationAcquired = false;
+    this.deliveryLatitude = 0;
+    this.deliveryLongitude = 0;
+    this.location = '';
+    if (this.map) {
+      this.map.remove();
+      this.map = null;
+    }
   }
 
   placeOrder() {
@@ -65,13 +162,30 @@ export class CheckoutComponent {
 
     var cleanPhone = this.phone.replace(/\D/g, '');
     var self = this;
-    this.orderService.placeOrder(this.customerName.trim(), cleanPhone, this.location.trim(), orderItems).subscribe(
-      function(res) {
+
+    var orderData: any = {
+      customerName: this.customerName.trim(),
+      phone: cleanPhone,
+      location: this.location.trim(),
+      items: orderItems
+    };
+
+    // Include GPS coordinates if available
+    if (this.deliveryLatitude !== 0 && this.deliveryLongitude !== 0) {
+      orderData.deliveryLatitude = this.deliveryLatitude;
+      orderData.deliveryLongitude = this.deliveryLongitude;
+    }
+
+    this.orderService.placeOrderWithCoords(orderData).subscribe(
+      function(res: any) {
         self.orderPlaced = true;
         self.orderDate = new Date().toLocaleString();
         self.loading = false;
+        if (res.orders && res.orders.length > 0) {
+          self.orderIds = res.orders.map(function(o: any) { return o.id; });
+        }
       },
-      function(err) {
+      function(err: any) {
         self.error = (err.error && err.error.message) || 'Failed to place order.';
         self.loading = false;
       }

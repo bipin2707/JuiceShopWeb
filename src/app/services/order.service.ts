@@ -18,8 +18,16 @@ export class OrderService {
     });
   }
 
+  placeOrderWithCoords(orderData: any): Observable<any> {
+    return this.http.post(this.url + '/place', orderData);
+  }
+
   getOrders(): Observable<any[]> {
     return this.http.get<any[]>(this.url);
+  }
+
+  getMyOrders(phone: string): Observable<any[]> {
+    return this.http.get<any[]>(this.url + '/my-orders/' + phone);
   }
 
   getDashboard(from: string, to: string): Observable<any> {

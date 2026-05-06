@@ -1,0 +1,63 @@
+<div class="container">
+  <h2>&#128666; Delivery Dashboard</h2>
+
+  <div *ngIf="loading" class="loading">Loading dashboard...</div>
+
+  <div *ngIf="!loading && dashboard">
+    <!-- Stats Cards -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-number">{{ dashboard.totalDeliveries }}</div>
+        <div class="stat-label">Total Deliveries</div>
+      </div>
+      <div class="stat-card active">
+        <div class="stat-number">{{ dashboard.activeDeliveries }}</div>
+        <div class="stat-label">Active Now</div>
+      </div>
+      <div class="stat-card completed">
+        <div class="stat-number">{{ dashboard.completedDeliveries }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-section">
+      <a routerLink="/delivery/track" class="action-btn start-btn">
+        &#128205; Start New Delivery
+      </a>
+      <button (click)="loadDashboard()" class="action-btn refresh-btn">
+        &#128260; Refresh
+      </button>
+    </div>
+
+    <!-- Delivery History -->
+    <div *ngIf="dashboard.deliveries && dashboard.deliveries.length > 0" class="history-section">
+      <h3>Delivery History</h3>
+      <div *ngFor="let d of dashboard.deliveries" class="delivery-card">
+        <div class="delivery-header">
+          <div class="customer-info">
+            <span class="customer-name">{{ d.customerName }}</span>
+            <span class="juice-info">{{ d.juiceName }} x{{ d.quantity }}</span>
+          </div>
+          <div class="delivery-status">
+            <span class="badge" [ngClass]="{'badge-active': d.isActive, 'badge-completed': !d.isActive}">
+              {{ d.isActive ? 'Active' : 'Completed' }}
+            </span>
+          </div>
+        </div>
+        <div class="delivery-details">
+          <span *ngIf="d.location">&#128205; {{ d.location }}</span>
+          <span *ngIf="d.phone">&#128222; {{ d.phone }}</span>
+          <span class="amount">&#8377; {{ d.amount | number:'1.2-2' }}</span>
+        </div>
+        <div class="delivery-time">{{ d.updatedAt }}</div>
+      </div>
+    </div>
+
+    <div *ngIf="!dashboard.deliveries || dashboard.deliveries.length === 0" class="empty">
+      <p>No deliveries yet. Start your first delivery!</p>
+    </div>
+  </div>
+
+  <p *ngIf="error" class="error">{{ error }}</p>
+</div>

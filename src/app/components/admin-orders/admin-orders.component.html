@@ -33,7 +33,8 @@
         <td>
           <button *ngIf="order.status === 'PENDING'" class="btn-accept" (click)="accept(order)">Accept</button>
           <button *ngIf="order.status === 'PENDING'" class="btn-reject" (click)="reject(order)">Reject</button>
-          <span *ngIf="order.status !== 'PENDING'" class="done">-</span>
+          <a *ngIf="order.status === 'ACCEPTED'" [routerLink]="['/track-order', order.id]" class="btn-track">&#128666; Track</a>
+          <span *ngIf="order.status === 'REJECTED'" class="done">-</span>
         </td>
       </tr>
     </tbody>
