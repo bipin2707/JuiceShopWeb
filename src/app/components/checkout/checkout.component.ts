@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { CartService, CartItem } from '../../services/cart.service';
 import { OrderService } from '../../services/order.service';
 
@@ -14,6 +15,7 @@ export class CheckoutComponent {
   customerName = '';
   phone = '';
   location = '';
+  landmark = '';
   error = '';
   phoneError = '';
   loading = false;
@@ -34,7 +36,8 @@ export class CheckoutComponent {
   constructor(
     public cart: CartService,
     private orderService: OrderService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {}
 
   get items(): CartItem[] {
@@ -68,7 +71,9 @@ export class CheckoutComponent {
         self.deliveryLongitude = position.coords.longitude;
         self.locationAcquired = true;
         self.locationLoading = false;
-        self.location = 'GPS: ' + self.deliveryLatitude.toFixed(6) + ', ' + self.deliveryLongitude.toFixed(6);
+
+        // Reverse geocode to get street name
+        self.reverseGeocode(self.deliveryLatitude, self.deliveryLongitude);
 
         // Show mini map
         setTimeout(function() { self.showLocationMap(); }, 100);
@@ -84,6 +89,38 @@ export class CheckoutComponent {
         }
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }
+
+  reverseGeocode(lat: number, lng: number) {
+    var url = 'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&zoom=18&addressdetails=1';
+    var self = this;
+    this.http.get(url).subscribe(
+      function(data: any) {
+        if (data && data.address) {
+          var addr = data.address;
+          var parts: string[] = [];
+          if (addr.road) parts.push(addr.road);
+          if (addr.neighbourhood) parts.push(addr.neighbourhood);
+          if (addr.suburb) parts.push(addr.suburb);
+          if (addr.city || addr.town || addr.village) parts.push(addr.city || addr.town || addr.village);
+          if (addr.state) parts.push(addr.state);
+
+          if (parts.length > 0) {
+            self.location = parts.join(', ');
+          } else if (data.display_name) {
+            self.location = data.display_name.substring(0, 100);
+          } else {
+            self.location = lat.toFixed(6) + ', ' + lng.toFixed(6);
+          }
+        } else {
+          self.location = lat.toFixed(6) + ', ' + lng.toFixed(6);
+        }
+      },
+      function() {
+        // Fallback to coordinates if geocoding fails
+        self.location = lat.toFixed(6) + ', ' + lng.toFixed(6);
+      }
     );
   }
 
@@ -120,7 +157,8 @@ export class CheckoutComponent {
       var pos = self.marker.getLatLng();
       self.deliveryLatitude = pos.lat;
       self.deliveryLongitude = pos.lng;
-      self.location = 'GPS: ' + pos.lat.toFixed(6) + ', ' + pos.lng.toFixed(6);
+      // Re-geocode the new position
+      self.reverseGeocode(pos.lat, pos.lng);
     });
   }
 
@@ -167,6 +205,7 @@ export class CheckoutComponent {
       customerName: this.customerName.trim(),
       phone: cleanPhone,
       location: this.location.trim(),
+      landmark: this.landmark.trim() || null,
       items: orderItems
     };
 

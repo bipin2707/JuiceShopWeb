@@ -34,6 +34,11 @@
         <div class="step-dot"></div>
         <div class="step-label">Out for Delivery</div>
       </div>
+      <div class="timeline-line" [class.active]="getStatusStep() >= 4"></div>
+      <div class="timeline-step" [class.active]="getStatusStep() >= 4">
+        <div class="step-dot"></div>
+        <div class="step-label">Delivered</div>
+      </div>
     </div>
 
     <!-- Rejected Status -->
@@ -56,6 +61,13 @@
       <p class="status-text">Order Accepted!</p>
       <p class="status-hint">Your order has been accepted. A delivery partner will pick it up soon.</p>
       <p class="status-hint">Live map will appear once the delivery starts.</p>
+    </div>
+
+    <!-- Delivered -->
+    <div *ngIf="status === 'DELIVERED'" class="status-card delivered-card">
+      <p class="status-icon">&#127881;</p>
+      <p class="status-text">Order Delivered!</p>
+      <p class="status-hint">Your order has been delivered successfully. Enjoy!</p>
     </div>
   </div>
 
@@ -80,6 +92,9 @@
       <div id="tracking-map"></div>
     </div>
 
+    <p class="map-legend">
+      &#128994; Green = Delivery Partner &nbsp; | &nbsp; &#128308; Red = Your Location &nbsp; | &nbsp; --- Route
+    </p>
     <p class="refresh-note">&#128260; Map refreshes automatically every 5 seconds</p>
   </div>
 </div>

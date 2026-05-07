@@ -32,6 +32,7 @@
             <p><strong>Customer:</strong> {{ order.customerName }}</p>
             <p><strong>Phone:</strong> {{ order.phone }}</p>
             <p><strong>Location:</strong> {{ order.location || 'Not specified' }}</p>
+            <p *ngIf="order.landmark"><strong>Landmark:</strong> {{ order.landmark }}</p>
             <p *ngIf="order.deliveryLatitude"><strong>GPS:</strong> {{ order.deliveryLatitude }}, {{ order.deliveryLongitude }}</p>
             <p><strong>Item:</strong> {{ order.juiceName }} x {{ order.quantity }}</p>
             <p><strong>Ordered:</strong> {{ order.createdAt }}</p>

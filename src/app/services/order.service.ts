@@ -41,4 +41,12 @@ export class OrderService {
   rejectOrder(id: string): Observable<any> {
     return this.http.post(this.url + '/reject/' + id, {});
   }
+
+  markOutForDelivery(id: string): Observable<any> {
+    return this.http.post(this.url + '/out-for-delivery/' + id, {});
+  }
+
+  markDelivered(id: string): Observable<any> {
+    return this.http.post(this.url + '/delivered/' + id, {});
+  }
 }

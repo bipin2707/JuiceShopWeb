@@ -39,7 +39,6 @@ export class MyOrdersComponent {
     this.loading = true;
     this.searched = true;
 
-    // Save phone for convenience
     localStorage.setItem('juice_customer_phone', cleanPhone);
 
     var self = this;
@@ -55,9 +54,21 @@ export class MyOrdersComponent {
     );
   }
 
+  markReceived(order: any) {
+    var self = this;
+    this.orderService.markDelivered(order.id).subscribe(
+      function() {
+        order.status = 'DELIVERED';
+      },
+      function() {}
+    );
+  }
+
   getStatusClass(status: string): string {
     if (status === 'PENDING') return 'status-pending';
     if (status === 'ACCEPTED') return 'status-accepted';
+    if (status === 'OUT_FOR_DELIVERY') return 'status-out-for-delivery';
+    if (status === 'DELIVERED') return 'status-delivered';
     if (status === 'REJECTED') return 'status-rejected';
     return '';
   }
@@ -65,20 +76,32 @@ export class MyOrdersComponent {
   getStatusIcon(status: string): string {
     if (status === 'PENDING') return '\u23F3';
     if (status === 'ACCEPTED') return '\u2705';
+    if (status === 'OUT_FOR_DELIVERY') return '\uD83D\uDE9A';
+    if (status === 'DELIVERED') return '\uD83C\uDF89';
     if (status === 'REJECTED') return '\u274C';
     return '';
   }
 
+  getStatusLabel(status: string): string {
+    if (status === 'OUT_FOR_DELIVERY') return 'Out for Delivery';
+    if (status === 'DELIVERED') return 'Delivered';
+    return status;
+  }
+
   getProgressWidth(status: string): number {
-    if (status === 'PENDING') return 33;
-    if (status === 'ACCEPTED') return 66;
+    if (status === 'PENDING') return 20;
+    if (status === 'ACCEPTED') return 45;
+    if (status === 'OUT_FOR_DELIVERY') return 70;
+    if (status === 'DELIVERED') return 100;
     if (status === 'REJECTED') return 100;
     return 0;
   }
 
   getProgressColor(status: string): string {
     if (status === 'PENDING') return '#f57f17';
-    if (status === 'ACCEPTED') return '#2e7d32';
+    if (status === 'ACCEPTED') return '#1565c0';
+    if (status === 'OUT_FOR_DELIVERY') return '#e65100';
+    if (status === 'DELIVERED') return '#2e7d32';
     if (status === 'REJECTED') return '#c62828';
     return '#ccc';
   }

@@ -47,26 +47,39 @@
           </div>
         </div>
         <div class="progress-labels">
-          <span [class.active]="order.status === 'PENDING' || order.status === 'ACCEPTED'">Placed</span>
-          <span [class.active]="order.status === 'ACCEPTED'">Accepted</span>
-          <span [class.active]="order.status === 'ACCEPTED'">Out for Delivery</span>
+          <span [class.active]="order.status !== 'REJECTED'">Placed</span>
+          <span [class.active]="order.status === 'ACCEPTED' || order.status === 'OUT_FOR_DELIVERY' || order.status === 'DELIVERED'">Accepted</span>
+          <span [class.active]="order.status === 'OUT_FOR_DELIVERY' || order.status === 'DELIVERED'">Out for Delivery</span>
+          <span [class.active]="order.status === 'DELIVERED'">Delivered</span>
         </div>
       </div>
 
       <!-- Status Badge -->
       <div class="order-footer">
         <span class="status-badge" [ngClass]="getStatusClass(order.status)">
-          {{ getStatusIcon(order.status) }} {{ order.status }}
+          {{ getStatusIcon(order.status) }} {{ getStatusLabel(order.status) }}
         </span>
         <span class="order-time">{{ order.createdAt }}</span>
       </div>
 
-      <!-- Location & Track -->
+      <!-- Actions -->
       <div class="order-meta">
         <span *ngIf="order.location" class="location">&#128205; {{ order.location }}</span>
-        <a *ngIf="order.status === 'ACCEPTED'" [routerLink]="['/track-order', order.id]" class="track-link">
+
+        <!-- Track button for OUT_FOR_DELIVERY -->
+        <a *ngIf="order.status === 'OUT_FOR_DELIVERY'" [routerLink]="['/track-order', order.id]" class="track-link">
           &#128666; Track Delivery
         </a>
+
+        <!-- Received button for OUT_FOR_DELIVERY -->
+        <button *ngIf="order.status === 'OUT_FOR_DELIVERY'" (click)="markReceived(order)" class="received-btn">
+          &#9989; Order Received
+        </button>
+
+        <!-- Delivered confirmation -->
+        <span *ngIf="order.status === 'DELIVERED'" class="delivered-text">
+          &#127881; Delivered Successfully
+        </span>
       </div>
     </div>
   </div>

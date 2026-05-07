@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { TrackingService } from '../../services/tracking.service';
 import { DeliveryAuthService } from '../../services/delivery-auth.service';
+import { OrderService } from '../../services/order.service';
 
 declare var L: any;
 
@@ -24,17 +26,19 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
   private map: any = null;
   private marker: any = null;
   private customerMarker: any = null;
+  private routeLine: any = null;
   private watchId: number = 0;
   private sendInterval: any = null;
 
   constructor(
     private trackingService: TrackingService,
     private deliveryAuth: DeliveryAuthService,
-    private router: Router
+    private orderService: OrderService,
+    private router: Router,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
-    // Check if delivery boy is logged in
     var deliveryBoy = this.deliveryAuth.getDeliveryBoy();
     if (!deliveryBoy) {
       this.router.navigate(['/delivery-login']);
@@ -74,9 +78,24 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
     }
 
     this.error = '';
-    this.isTracking = true;
-    this.statusMessage = 'Getting your location...';
+    this.statusMessage = 'Marking order as out for delivery...';
 
+    var self = this;
+
+    // Mark order as OUT_FOR_DELIVERY
+    this.orderService.markOutForDelivery(this.selectedOrderId).subscribe(
+      function() {
+        self.isTracking = true;
+        self.statusMessage = 'Getting your location...';
+        self.startGPS();
+      },
+      function(err: any) {
+        self.error = (err.error && err.error.message) || 'Failed to update order status.';
+      }
+    );
+  }
+
+  startGPS() {
     var self = this;
 
     if (!navigator.geolocation) {
@@ -85,7 +104,6 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Watch position continuously
     this.watchId = navigator.geolocation.watchPosition(
       function(position) {
         self.currentLat = position.coords.latitude;
@@ -99,7 +117,6 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
       { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
     );
 
-    // Send location to server every 5 seconds
     this.sendInterval = setInterval(function() {
       if (self.currentLat !== 0 && self.currentLng !== 0) {
         self.sendLocation();
@@ -126,6 +143,8 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
   }
 
   updateMapPosition(lat: number, lng: number) {
+    var selectedOrder = this.getSelectedOrder();
+
     if (!this.map) {
       this.map = L.map('delivery-map').setView([lat, lng], 16);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -145,8 +164,7 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
       this.marker = L.marker([lat, lng], { icon: deliveryIcon }).addTo(this.map);
       this.marker.bindPopup('<b>Your Location</b>').openPopup();
 
-      // Show customer's delivery location if available
-      var selectedOrder = this.getSelectedOrder();
+      // Show customer's delivery location
       if (selectedOrder && selectedOrder.deliveryLatitude && selectedOrder.deliveryLongitude) {
         var customerIcon = L.icon({
           iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
@@ -156,19 +174,68 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
           popupAnchor: [1, -34],
           shadowSize: [41, 41]
         });
+        var popupText = '<b>Customer: ' + selectedOrder.customerName + '</b><br>' +
+          (selectedOrder.location || '') +
+          (selectedOrder.landmark ? '<br>Landmark: ' + selectedOrder.landmark : '');
         this.customerMarker = L.marker(
           [selectedOrder.deliveryLatitude, selectedOrder.deliveryLongitude],
           { icon: customerIcon }
         ).addTo(this.map);
-        this.customerMarker.bindPopup('<b>Customer Location</b><br>' + (selectedOrder.location || selectedOrder.customerName));
+        this.customerMarker.bindPopup(popupText);
 
-        // Fit bounds to show both markers
-        var group = L.featureGroup([this.marker, this.customerMarker]);
-        this.map.fitBounds(group.getBounds().pad(0.2));
+        // Fetch and draw route
+        this.fetchRoute(lat, lng, selectedOrder.deliveryLatitude, selectedOrder.deliveryLongitude);
       }
     } else {
       this.marker.setLatLng([lat, lng]);
+
+      // Update route every 30 seconds (not every position update to avoid API spam)
+      if (selectedOrder && selectedOrder.deliveryLatitude && selectedOrder.deliveryLongitude) {
+        if (!this.routeLine) {
+          this.fetchRoute(lat, lng, selectedOrder.deliveryLatitude, selectedOrder.deliveryLongitude);
+        }
+      }
     }
+  }
+
+  fetchRoute(fromLat: number, fromLng: number, toLat: number, toLng: number) {
+    var url = 'https://router.project-osrm.org/route/v1/driving/' +
+      fromLng + ',' + fromLat + ';' + toLng + ',' + toLat +
+      '?overview=full&geometries=geojson';
+
+    var self = this;
+    this.http.get(url).subscribe(
+      function(data: any) {
+        if (data && data.routes && data.routes.length > 0) {
+          var coords = data.routes[0].geometry.coordinates;
+          // Convert [lng, lat] to [lat, lng] for Leaflet
+          var latLngs = [];
+          for (var i = 0; i < coords.length; i++) {
+            latLngs.push([coords[i][1], coords[i][0]]);
+          }
+
+          // Remove old route line
+          if (self.routeLine) {
+            self.map.removeLayer(self.routeLine);
+          }
+
+          // Draw route
+          self.routeLine = L.polyline(latLngs, {
+            color: '#1565c0',
+            weight: 4,
+            opacity: 0.7,
+            dashArray: '10, 10'
+          }).addTo(self.map);
+
+          // Fit map to show full route
+          var group = L.featureGroup([self.marker, self.customerMarker, self.routeLine]);
+          self.map.fitBounds(group.getBounds().pad(0.1));
+        }
+      },
+      function() {
+        // Route fetch failed - just show markers without route
+      }
+    );
   }
 
   getSelectedOrder(): any {
@@ -210,6 +277,7 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
       this.map = null;
       this.marker = null;
       this.customerMarker = null;
+      this.routeLine = null;
     }
   }
 }

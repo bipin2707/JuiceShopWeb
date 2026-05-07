@@ -96,7 +96,9 @@ h2 { text-align: center; color: #1565c0; margin-bottom: 20px; }
   font-weight: bold;
 }
 .status-pending { background: #fff8e1; color: #f57f17; }
-.status-accepted { background: #e8f5e9; color: #2e7d32; }
+.status-accepted { background: #e8f5e9; color: #1565c0; }
+.status-out-for-delivery { background: #fff3e0; color: #e65100; }
+.status-delivered { background: #e8f5e9; color: #2e7d32; }
 .status-rejected { background: #ffebee; color: #c62828; }
 .order-time { font-size: 12px; color: #999; }
 
@@ -106,6 +108,8 @@ h2 { text-align: center; color: #1565c0; margin-bottom: 20px; }
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .location { color: #888; }
 .track-link {
@@ -115,3 +119,22 @@ h2 { text-align: center; color: #1565c0; margin-bottom: 20px; }
   font-size: 13px;
 }
 .track-link:hover { text-decoration: underline; }
+
+.received-btn {
+  padding: 6px 14px;
+  background: #2e7d32;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.received-btn:hover { background: #1b5e20; }
+
+.delivered-text {
+  color: #2e7d32;
+  font-weight: bold;
+  font-size: 13px;
+}

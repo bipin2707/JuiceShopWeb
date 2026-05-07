@@ -17,12 +17,18 @@
     <div class="form-group">
       <label>Delivery Location</label>
       <div class="location-row">
-        <input [(ngModel)]="location" placeholder="Delivery address or area" class="location-input" />
+        <input [(ngModel)]="location" placeholder="Street / Area / Address" class="location-input" />
         <button type="button" (click)="useCurrentLocation()" [disabled]="locationLoading" class="gps-btn">
           {{ locationLoading ? '&#8987; Getting...' : '&#128205; Use GPS' }}
         </button>
       </div>
       <p *ngIf="locationError" class="field-error">{{ locationError }}</p>
+    </div>
+
+    <!-- Landmark -->
+    <div class="form-group">
+      <label>Landmark <span class="optional">(optional)</span></label>
+      <input [(ngModel)]="landmark" placeholder="Near temple, opposite park, etc." />
     </div>
 
     <!-- Mini Map (shown after GPS acquired) -->
@@ -78,6 +84,7 @@
       <p><strong>Customer:</strong> {{ customerName }}</p>
       <p><strong>Phone:</strong> {{ phone }}</p>
       <p *ngIf="location"><strong>Location:</strong> {{ location }}</p>
+      <p *ngIf="landmark"><strong>Landmark:</strong> {{ landmark }}</p>
       <p><strong>Date:</strong> {{ orderDate }}</p>
       <p><strong>Status:</strong> <span class="status-pending">Pending Approval</span></p>
     </div>
