@@ -66,8 +66,8 @@
       <div class="order-meta">
         <span *ngIf="order.location" class="location">&#128205; {{ order.location }}</span>
 
-        <!-- Track button for OUT_FOR_DELIVERY -->
-        <a *ngIf="order.status === 'OUT_FOR_DELIVERY'" [routerLink]="['/track-order', order.id]" class="track-link">
+        <!-- Track button for ACCEPTED and OUT_FOR_DELIVERY -->
+        <a *ngIf="order.status === 'ACCEPTED' || order.status === 'OUT_FOR_DELIVERY'" [routerLink]="['/track-order', order.id]" class="track-link">
           &#128666; Track Delivery
         </a>
 
