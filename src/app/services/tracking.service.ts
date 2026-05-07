@@ -38,4 +38,9 @@ export class TrackingService {
   getAcceptedOrders(): Observable<any[]> {
     return this.http.get<any[]>(this.url + '/orders/accepted');
   }
+
+  /** Get delivery boy's own active orders */
+  getMyDeliveries(deliveryBoyName: string): Observable<any[]> {
+    return this.http.get<any[]>(this.url + '/orders/my-deliveries?deliveryBoyName=' + encodeURIComponent(deliveryBoyName));
+  }
 }

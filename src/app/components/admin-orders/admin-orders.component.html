@@ -10,6 +10,7 @@
         <th>Qty</th>
         <th>Amount</th>
         <th>Status</th>
+        <th>Delivery Boy</th>
         <th>Time</th>
         <th>Actions</th>
       </tr>
@@ -25,15 +26,26 @@
         <td>{{ order.quantity }}</td>
         <td>&#8377; {{ order.amount | number:'1.2-2' }}</td>
         <td>
-          <span [ngClass]="{'status-pending': order.status === 'PENDING', 'status-accepted': order.status === 'ACCEPTED', 'status-rejected': order.status === 'REJECTED'}">
-            {{ order.status }}
+          <span [ngClass]="{
+            'status-pending': order.status === 'PENDING',
+            'status-accepted': order.status === 'ACCEPTED',
+            'status-out': order.status === 'OUT_FOR_DELIVERY',
+            'status-delivered': order.status === 'DELIVERED',
+            'status-rejected': order.status === 'REJECTED'
+          }">
+            {{ order.status === 'OUT_FOR_DELIVERY' ? 'Out for Delivery' : order.status }}
           </span>
+        </td>
+        <td>
+          <span *ngIf="order.assignedTo" class="delivery-boy-name">{{ order.assignedTo }}</span>
+          <span *ngIf="!order.assignedTo" class="not-assigned">-</span>
         </td>
         <td>{{ order.createdAt }}</td>
         <td>
           <button *ngIf="order.status === 'PENDING'" class="btn-accept" (click)="accept(order)">Accept</button>
           <button *ngIf="order.status === 'PENDING'" class="btn-reject" (click)="reject(order)">Reject</button>
-          <a *ngIf="order.status === 'ACCEPTED'" [routerLink]="['/track-order', order.id]" class="btn-track">&#128666; Track</a>
+          <a *ngIf="order.status === 'ACCEPTED' || order.status === 'OUT_FOR_DELIVERY'" [routerLink]="['/track-order', order.id]" class="btn-track">&#128666; Track</a>
+          <span *ngIf="order.status === 'DELIVERED'" class="done">&#9989;</span>
           <span *ngIf="order.status === 'REJECTED'" class="done">-</span>
         </td>
       </tr>
@@ -41,6 +53,3 @@
   </table>
   <div *ngIf="!loading && orders.length === 0" class="empty">No orders yet.</div>
 </div>
-
-
-

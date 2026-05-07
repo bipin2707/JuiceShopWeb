@@ -14,6 +14,7 @@ declare var L: any;
 })
 export class DeliveryTrackingComponent implements OnInit, OnDestroy {
   orders: any[] = [];
+  myActiveOrders: any[] = [];
   selectedOrderId = '';
   deliveryPersonName = '';
   isTracking = false;
@@ -45,7 +46,7 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
       return;
     }
     this.deliveryPersonName = deliveryBoy.name;
-    this.loadAcceptedOrders();
+    this.loadOrders();
   }
 
   ngOnDestroy() {
@@ -56,19 +57,40 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadAcceptedOrders() {
+  loadOrders() {
     this.loading = true;
     var self = this;
+    var loadedCount = 0;
+
+    // Load available (unassigned) orders
     this.trackingService.getAcceptedOrders().subscribe(
       function(data: any) {
         self.orders = data;
-        self.loading = false;
+        loadedCount++;
+        if (loadedCount === 2) self.loading = false;
       },
       function() {
-        self.loading = false;
-        self.error = 'Failed to load orders.';
+        loadedCount++;
+        if (loadedCount === 2) self.loading = false;
       }
     );
+
+    // Load my active orders (assigned to me)
+    this.trackingService.getMyDeliveries(this.deliveryPersonName).subscribe(
+      function(data: any) {
+        self.myActiveOrders = data;
+        loadedCount++;
+        if (loadedCount === 2) self.loading = false;
+      },
+      function() {
+        loadedCount++;
+        if (loadedCount === 2) self.loading = false;
+      }
+    );
+  }
+
+  loadAcceptedOrders() {
+    this.loadOrders();
   }
 
   startTracking() {
@@ -82,8 +104,8 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
 
     var self = this;
 
-    // Mark order as OUT_FOR_DELIVERY
-    this.orderService.markOutForDelivery(this.selectedOrderId).subscribe(
+    // Mark order as OUT_FOR_DELIVERY with delivery boy name
+    this.orderService.markOutForDelivery(this.selectedOrderId, this.deliveryPersonName).subscribe(
       function() {
         self.isTracking = true;
         self.statusMessage = 'Getting your location...';
@@ -93,6 +115,14 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
         self.error = (err.error && err.error.message) || 'Failed to update order status.';
       }
     );
+  }
+
+  resumeTracking(order: any) {
+    this.selectedOrderId = order.id;
+    this.error = '';
+    this.isTracking = true;
+    this.statusMessage = 'Resuming delivery...';
+    this.startGPS();
   }
 
   startGPS() {
@@ -164,7 +194,6 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
       this.marker = L.marker([lat, lng], { icon: deliveryIcon }).addTo(this.map);
       this.marker.bindPopup('<b>Your Location</b>').openPopup();
 
-      // Show customer's delivery location
       if (selectedOrder && selectedOrder.deliveryLatitude && selectedOrder.deliveryLongitude) {
         var customerIcon = L.icon({
           iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
@@ -183,18 +212,10 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
         ).addTo(this.map);
         this.customerMarker.bindPopup(popupText);
 
-        // Fetch and draw route
         this.fetchRoute(lat, lng, selectedOrder.deliveryLatitude, selectedOrder.deliveryLongitude);
       }
     } else {
       this.marker.setLatLng([lat, lng]);
-
-      // Update route every 30 seconds (not every position update to avoid API spam)
-      if (selectedOrder && selectedOrder.deliveryLatitude && selectedOrder.deliveryLongitude) {
-        if (!this.routeLine) {
-          this.fetchRoute(lat, lng, selectedOrder.deliveryLatitude, selectedOrder.deliveryLongitude);
-        }
-      }
     }
   }
 
@@ -208,18 +229,15 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
       function(data: any) {
         if (data && data.routes && data.routes.length > 0) {
           var coords = data.routes[0].geometry.coordinates;
-          // Convert [lng, lat] to [lat, lng] for Leaflet
           var latLngs = [];
           for (var i = 0; i < coords.length; i++) {
             latLngs.push([coords[i][1], coords[i][0]]);
           }
 
-          // Remove old route line
           if (self.routeLine) {
             self.map.removeLayer(self.routeLine);
           }
 
-          // Draw route
           self.routeLine = L.polyline(latLngs, {
             color: '#1565c0',
             weight: 4,
@@ -227,20 +245,21 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
             dashArray: '10, 10'
           }).addTo(self.map);
 
-          // Fit map to show full route
           var group = L.featureGroup([self.marker, self.customerMarker, self.routeLine]);
           self.map.fitBounds(group.getBounds().pad(0.1));
         }
       },
-      function() {
-        // Route fetch failed - just show markers without route
-      }
+      function() {}
     );
   }
 
   getSelectedOrder(): any {
+    // Check in both lists
     for (var i = 0; i < this.orders.length; i++) {
       if (this.orders[i].id === this.selectedOrderId) return this.orders[i];
+    }
+    for (var j = 0; j < this.myActiveOrders.length; j++) {
+      if (this.myActiveOrders[j].id === this.selectedOrderId) return this.myActiveOrders[j];
     }
     return null;
   }

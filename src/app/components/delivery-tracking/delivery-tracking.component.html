@@ -3,46 +3,66 @@
 
   <!-- Setup Form -->
   <div *ngIf="!isTracking" class="setup-form">
-    <div *ngIf="loading" class="loading">Loading accepted orders...</div>
+    <div *ngIf="loading" class="loading">Loading orders...</div>
 
-    <div *ngIf="!loading && orders.length === 0" class="empty">
-      <p>No accepted orders available for delivery.</p>
-      <button (click)="loadAcceptedOrders()" class="refresh-btn">&#128260; Refresh</button>
+    <!-- My Active Deliveries (Resume) -->
+    <div *ngIf="!loading && myActiveOrders.length > 0" class="my-active-section">
+      <h3>&#128260; My Active Deliveries</h3>
+      <p class="section-hint">You have orders in progress. Resume tracking:</p>
+      <div *ngFor="let order of myActiveOrders" class="active-order-card">
+        <div class="active-order-info">
+          <span class="active-customer">{{ order.customerName }}</span>
+          <span class="active-juice">{{ order.juiceName }} x{{ order.quantity }}</span>
+          <span *ngIf="order.location" class="active-location">&#128205; {{ order.location }}</span>
+          <span class="active-status">{{ order.status }}</span>
+        </div>
+        <button (click)="resumeTracking(order)" class="resume-btn">&#128205; Resume Tracking</button>
+      </div>
     </div>
 
-    <div *ngIf="!loading && orders.length > 0">
-      <p class="welcome-msg">Welcome, <strong>{{ deliveryPersonName }}</strong></p>
-
-      <div class="form-group">
-        <label>Select Order to Deliver</label>
-        <select [(ngModel)]="selectedOrderId" class="input-field">
-          <option value="">-- Select an order --</option>
-          <option *ngFor="let order of orders" [value]="order.id">
-            {{ order.customerName }} - {{ order.juiceName }} x{{ order.quantity }}
-            <span *ngIf="order.location"> ({{ order.location }})</span>
-          </option>
-        </select>
+    <!-- Available Orders (New) -->
+    <div *ngIf="!loading">
+      <div *ngIf="orders.length === 0 && myActiveOrders.length === 0" class="empty">
+        <p>No orders available for delivery.</p>
+        <button (click)="loadAcceptedOrders()" class="refresh-btn">&#128260; Refresh</button>
       </div>
 
-      <!-- Order details -->
-      <div *ngIf="selectedOrderId" class="order-details">
-        <h4>Order Details</h4>
-        <div *ngFor="let order of orders">
-          <div *ngIf="order.id === selectedOrderId" class="detail-card">
-            <p><strong>Customer:</strong> {{ order.customerName }}</p>
-            <p><strong>Phone:</strong> {{ order.phone }}</p>
-            <p><strong>Location:</strong> {{ order.location || 'Not specified' }}</p>
-            <p *ngIf="order.landmark"><strong>Landmark:</strong> {{ order.landmark }}</p>
-            <p *ngIf="order.deliveryLatitude"><strong>GPS:</strong> {{ order.deliveryLatitude }}, {{ order.deliveryLongitude }}</p>
-            <p><strong>Item:</strong> {{ order.juiceName }} x {{ order.quantity }}</p>
-            <p><strong>Ordered:</strong> {{ order.createdAt }}</p>
+      <div *ngIf="orders.length > 0">
+        <h3 *ngIf="myActiveOrders.length > 0">&#128230; Available Orders</h3>
+        <p class="welcome-msg">Welcome, <strong>{{ deliveryPersonName }}</strong></p>
+
+        <div class="form-group">
+          <label>Select Order to Deliver</label>
+          <select [(ngModel)]="selectedOrderId" class="input-field">
+            <option value="">-- Select an order --</option>
+            <option *ngFor="let order of orders" [value]="order.id">
+              {{ order.customerName }} - {{ order.juiceName }} x{{ order.quantity }}
+              <span *ngIf="order.location"> ({{ order.location }})</span>
+            </option>
+          </select>
+        </div>
+
+        <!-- Order details -->
+        <div *ngIf="selectedOrderId" class="order-details">
+          <h4>Order Details</h4>
+          <div *ngFor="let order of orders">
+            <div *ngIf="order.id === selectedOrderId" class="detail-card">
+              <p><strong>Customer:</strong> {{ order.customerName }}</p>
+              <p><strong>Phone:</strong> {{ order.phone }}</p>
+              <p><strong>Location:</strong> {{ order.location || 'Not specified' }}</p>
+              <p *ngIf="order.landmark"><strong>Landmark:</strong> {{ order.landmark }}</p>
+              <p *ngIf="order.deliveryLatitude"><strong>GPS:</strong> {{ order.deliveryLatitude }}, {{ order.deliveryLongitude }}</p>
+              <p><strong>Item:</strong> {{ order.juiceName }} x {{ order.quantity }}</p>
+              <p><strong>Ordered:</strong> {{ order.createdAt }}</p>
+            </div>
           </div>
         </div>
+
+        <button (click)="startTracking()" class="start-btn">
+          &#128205; Start Delivery & Share Location
+        </button>
       </div>
 
-      <button (click)="startTracking()" class="start-btn">
-        &#128205; Start Delivery & Share Location
-      </button>
       <button (click)="loadAcceptedOrders()" class="refresh-btn">&#128260; Refresh Orders</button>
     </div>
 
