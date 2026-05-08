@@ -33,7 +33,7 @@
             'status-delivered': order.status === 'DELIVERED',
             'status-rejected': order.status === 'REJECTED'
           }">
-            {{ order.status === 'OUT_FOR_DELIVERY' ? 'Out for Delivery' : order.status }}
+            {{ order.status === 'OUT_FOR_DELIVERY' ? 'Out for Delivery' : (order.status === 'DELIVERED' ? 'Delivered' : order.status) }}
           </span>
         </td>
         <td>
