@@ -288,8 +288,27 @@ export class DeliveryTrackingComponent implements OnInit, OnDestroy {
   }
 
   completeDelivery() {
+    var orderId = this.selectedOrderId;
     this.stopTracking();
-    this.statusMessage = 'Delivery marked as completed!';
+    this.statusMessage = 'Delivery marked as completed! Notifying customer...';
+
+    // Send push notification to customer
+    if (orderId) {
+      var self = this;
+      this.trackingService.notifyDeliveryComplete(orderId).subscribe(
+        function(res: any) {
+          if (res.sent) {
+            self.statusMessage = 'Delivery completed! Customer has been notified.';
+          } else {
+            self.statusMessage = 'Delivery completed! (Customer notification not available)';
+          }
+        },
+        function() {
+          self.statusMessage = 'Delivery completed!';
+        }
+      );
+    }
+
     this.selectedOrderId = '';
     if (this.map) {
       this.map.remove();

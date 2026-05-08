@@ -14,6 +14,21 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyBlAZZz7UbZ45kP-xe-dpNn1i6ddJkSUuM",
+      authDomain: "juice-e22e2.firebaseapp.com",
+      projectId: "juice-e22e2",
+      storageBucket: "juice-e22e2.firebasestorage.app",
+      messagingSenderId: "706938520864",
+      appId: "1:706938520864:web:c6a37306aef07ade5b0345",
+      measurementId: "G-F3E9TJHYB9"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 </head>
 <body>
   <app-root></app-root>

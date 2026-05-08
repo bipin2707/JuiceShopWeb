@@ -43,4 +43,9 @@ export class TrackingService {
   getMyDeliveries(deliveryBoyName: string): Observable<any[]> {
     return this.http.get<any[]>(this.url + '/orders/my-deliveries?deliveryBoyName=' + encodeURIComponent(deliveryBoyName));
   }
+
+  /** Send push notification to customer that delivery is complete */
+  notifyDeliveryComplete(orderId: string): Observable<any> {
+    return this.http.post(environment.apiUrl + '/Notification/send-delivery-complete/' + orderId, {});
+  }
 }

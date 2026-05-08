@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CartService, CartItem } from '../../services/cart.service';
 import { OrderService } from '../../services/order.service';
+import { NotificationService } from '../../services/notification.service';
 
 declare var L: any;
 
@@ -37,7 +38,8 @@ export class CheckoutComponent {
     public cart: CartService,
     private orderService: OrderService,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private notificationService: NotificationService
   ) {}
 
   get items(): CartItem[] {
@@ -223,6 +225,8 @@ export class CheckoutComponent {
         if (res.orders && res.orders.length > 0) {
           self.orderIds = res.orders.map(function(o: any) { return o.id; });
         }
+        // Request notification permission and save token
+        self.requestNotifications(cleanPhone);
       },
       function(err: any) {
         self.error = (err.error && err.error.message) || 'Failed to place order.';
@@ -238,5 +242,18 @@ export class CheckoutComponent {
   newOrder() {
     this.cart.clear();
     this.router.navigate(['/menu']);
+  }
+
+  requestNotifications(phone: string) {
+    var self = this;
+    this.notificationService.requestPermission().then(function(token) {
+      // Save token for this phone number
+      self.notificationService.saveTokenForPhone(phone, token).subscribe(
+        function() {},
+        function() {}
+      );
+    }).catch(function() {
+      // User denied or not supported — no problem
+    });
   }
 }
