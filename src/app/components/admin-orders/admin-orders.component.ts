@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../../services/order.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-admin-orders',
@@ -10,10 +11,9 @@ export class AdminOrdersComponent implements OnInit {
   orders: any[] = [];
   loading = true;
 
-  constructor(private orderService: OrderService) {}
+  constructor(private orderService: OrderService, private notificationService: NotificationService) {}
 
   ngOnInit() { this.loadOrders(); }
-
 
   loadOrders() {
     this.loading = true;
@@ -24,8 +24,14 @@ export class AdminOrdersComponent implements OnInit {
   }
 
   accept(order: any) {
+    var self = this;
     this.orderService.acceptOrder(order.id).subscribe(function() {
       order.status = 'ACCEPTED';
+      // Notify delivery boys
+      self.notificationService.notifyOrderAccepted(order.id).subscribe(
+        function() {},
+        function() {}
+      );
     });
   }
 

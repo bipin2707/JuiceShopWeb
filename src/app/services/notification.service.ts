@@ -93,10 +93,25 @@ export class NotificationService {
   }
 
   /** Save FCM token for a phone number (all orders) */
-  saveTokenForPhone(phone: string, fcmToken: string) {
+  saveTokenForPhone(phone: string, fcmToken: string, role?: string) {
     return this.http.post(environment.apiUrl + '/Notification/register-phone', {
       phone: phone,
-      fcmToken: fcmToken
+      fcmToken: fcmToken,
+      role: role || 'customer'
     });
+  }
+
+  /** Notify admins about new order */
+  notifyNewOrder(customerName: string, phone: string, itemSummary: string) {
+    return this.http.post(environment.apiUrl + '/Notification/notify-new-order', {
+      customerName: customerName,
+      phone: phone,
+      itemSummary: itemSummary
+    });
+  }
+
+  /** Notify delivery boys about accepted order */
+  notifyOrderAccepted(orderId: string) {
+    return this.http.post(environment.apiUrl + '/Notification/notify-order-accepted/' + orderId, {});
   }
 }

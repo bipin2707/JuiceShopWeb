@@ -227,6 +227,12 @@ export class CheckoutComponent {
         }
         // Request notification permission and save token
         self.requestNotifications(cleanPhone);
+        // Notify admins about new order
+        var itemNames = self.items.map(function(i: any) { return i.juice.name + ' x' + i.quantity; }).join(', ');
+        self.notificationService.notifyNewOrder(self.customerName.trim(), cleanPhone, itemNames).subscribe(
+          function() {},
+          function() {}
+        );
       },
       function(err: any) {
         self.error = (err.error && err.error.message) || 'Failed to place order.';
@@ -246,14 +252,16 @@ export class CheckoutComponent {
 
   requestNotifications(phone: string) {
     var self = this;
+    console.log('Requesting notification permission...');
     this.notificationService.requestPermission().then(function(token) {
+      console.log('FCM token obtained:', token);
       // Save token for this phone number
       self.notificationService.saveTokenForPhone(phone, token).subscribe(
-        function() {},
-        function() {}
+        function() { console.log('FCM token saved to server'); },
+        function(err: any) { console.error('Failed to save FCM token:', err); }
       );
-    }).catch(function() {
-      // User denied or not supported — no problem
+    }).catch(function(err: any) {
+      console.warn('Notification permission failed:', err);
     });
   }
 }

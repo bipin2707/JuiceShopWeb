@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { DeliveryAuthService } from '../../services/delivery-auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-delivery-login',
@@ -15,9 +16,9 @@ export class DeliveryLoginComponent {
 
   constructor(
     private deliveryAuth: DeliveryAuthService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {
-    // If already logged in, redirect to delivery dashboard
     if (this.deliveryAuth.isLoggedIn()) {
       this.router.navigate(['/delivery/dashboard']);
     }
@@ -35,6 +36,13 @@ export class DeliveryLoginComponent {
     this.deliveryAuth.login(this.email.trim(), this.password.trim()).subscribe(
       function(res: any) {
         self.deliveryAuth.setDeliveryBoy(res.deliveryBoy);
+        // Register FCM token for delivery boy
+        self.notificationService.requestPermission().then(function(token) {
+          self.notificationService.saveTokenForPhone(res.deliveryBoy.email, token, 'delivery').subscribe(
+            function() {},
+            function() {}
+          );
+        }).catch(function() {});
         self.loading = false;
         self.router.navigate(['/delivery/dashboard']);
       },

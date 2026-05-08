@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-admin-login',
@@ -13,7 +14,7 @@ export class AdminLoginComponent {
   error = '';
   loading = false;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router, private notificationService: NotificationService) {}
 
   login() {
     if (!this.email.trim() || !this.password.trim()) {
@@ -22,14 +23,22 @@ export class AdminLoginComponent {
     }
     this.loading = true;
     this.error = '';
+    var self = this;
     this.auth.adminLogin(this.email.trim(), this.password.trim()).subscribe(
-      (res) => {
-        this.auth.setAdmin(res.admin);
-        this.router.navigate(['/admin/dashboard']);
+      function(res: any) {
+        self.auth.setAdmin(res.admin);
+        // Register FCM token for admin
+        self.notificationService.requestPermission().then(function(token) {
+          self.notificationService.saveTokenForPhone(res.admin.email, token, 'admin').subscribe(
+            function() {},
+            function() {}
+          );
+        }).catch(function() {});
+        self.router.navigate(['/admin/dashboard']);
       },
-      (err) => {
-        this.error = (err.error && err.error.message) || 'Invalid credentials.';
-        this.loading = false;
+      function(err: any) {
+        self.error = (err.error && err.error.message) || 'Invalid credentials.';
+        self.loading = false;
       }
     );
   }
